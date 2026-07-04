@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Asher's App Release Countdown</title>
+    <style>
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #0f172a; 
+            color: #f8fafc; 
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+        }
+        
+        /* App Title Styles */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+            letter-spacing: -0.025em;
+            color: #f8fafc;
+        }
+
+        /* Main Standard Countdown */
+        .main-countdown {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        .time-box {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            min-width: 100px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .main-num {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .main-label {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+        
+        hr {
+            border: 0;
+            height: 1px;
+            background: #334155;
+            margin-bottom: 40px;
+        }
+
+        /* Total Breakdowns Grid */
+        .totals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+        }
+        .total-box {
+            background: #111827;
+            border: 1px solid #334155;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .total-num {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #38bdf8;
+        }
+        .total-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Custom Title -->
+        <h1>Asher's App Release Countdown</h1>
+
+        <!-- Part 1: Standard Countdown -->
+        <div class="main-countdown">
+            <div class="time-box"><div id="d" class="main-num">00</div><div class="main-label">Days</div></div>
+            <div class="time-box"><div id="h" class="main-num">00</div><div class="main-label">Hours</div></div>
+            <div class="time-box"><div id="m" class="main-num">00</div><div class="main-label">Mins</div></div>
+            <div class="time-box"><div id="s" class="main-num">00</div><div class="main-label">Secs</div></div>
+        </div>
+
+        <hr>
+
+        <!-- Part 2: Total Bit Breakdowns -->
+        <div class="totals-grid">
+            <div class="total-box"><div id="tot-w" class="total-num">0</div><div class="total-label">Total Weeks</div></div>
+            <div class="total-box"><div id="tot-h" class="total-num">0</div><div class="total-label">Total Hours</div></div>
+            <div class="total-box"><div id="tot-m" class="total-num">0</div><div class="total-label">Total Minutes</div></div>
+            <div class="total-box"><div id="tot-s" class="total-num">0</div><div class="total-label">Total Seconds</div></div>
+        </div>
+    </div>
+
+    <script>
+        // Target set strictly to August 25, 23:59 EDT (UTC-4)
+        const targetDate = new Date("2026-08-25T23:59:00-04:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                document.querySelectorAll('.main-num, .total-num').forEach(el => el.innerHTML = "0");
+                clearInterval(timerInterval);
+                return;
+            }
+
+            // Math for Standard Display
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            // Math for Total Individual Units (with 1 decimal point for weeks)
+            const totalWeeks = (diff / (1000 * 60 * 60 * 24 * 7)).toFixed(1);
+            const totalHours = Math.floor(diff / (1000 * 60 * 60));
+            const totalMinutes = Math.floor(diff / (1000 * 60));
+            const totalSeconds = Math.floor(diff / 1000);
+
+            // Inject into Standard Boxes
+            document.getElementById('d').innerHTML = days;
+            document.getElementById('h').innerHTML = hours;
+            document.getElementById('m').innerHTML = minutes;
+            document.getElementById('s').innerHTML = seconds;
+
+            // Inject into Raw Totals (formatted with commas)
+            document.getElementById('tot-w').innerHTML = totalWeeks;
+            document.getElementById('tot-h').innerHTML = totalHours.toLocaleString();
+            document.getElementById('tot-m').innerHTML = totalMinutes.toLocaleString();
+            document.getElementById('tot-s').innerHTML = totalSeconds.toLocaleString();
+        }
+
+        const timerInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>

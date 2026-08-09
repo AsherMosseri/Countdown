@@ -204,9 +204,9 @@
                 set(el, 'm', Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));
                 set(el, 's', Math.floor((diff % (1000 * 60)) / 1000));
 
-                // Math for Total Individual Units (with 1 decimal point for weeks)
+                // Math for Total Individual Units (with 2 decimal points for weeks)
                 if (el.querySelector('.totals-grid')) {
-                    set(el, 'tot-w', (diff / (1000 * 60 * 60 * 24 * 7)).toFixed(1));
+                    set(el, 'tot-w', (diff / (1000 * 60 * 60 * 24 * 7)).toFixed(2));
                     set(el, 'tot-h', Math.floor(diff / (1000 * 60 * 60)).toLocaleString());
                     set(el, 'tot-m', Math.floor(diff / (1000 * 60)).toLocaleString());
                     set(el, 'tot-s', Math.floor(diff / 1000).toLocaleString());

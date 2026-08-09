@@ -135,7 +135,7 @@
         <!-- Website launch -->
         <section class="launch" id="site">
             <h2 class="launch-title">Website Goes Live</h2>
-            <span class="launch-when">Mon, Aug 10 &middot; 7:00 PM ET</span>
+            <span class="launch-when"></span>
 
             <div class="main-countdown compact">
                 <div class="time-box"><div data-u="d" class="main-num">00</div><div class="main-label">Days</div></div>
@@ -152,7 +152,7 @@
         <!-- App release -->
         <section class="launch" id="app">
             <h2 class="launch-title">App Release</h2>
-            <span class="launch-when">Tue, Aug 25 &middot; 4:00 PM ET</span>
+            <span class="launch-when"></span>
 
             <!-- Part 1: Standard Countdown -->
             <div class="main-countdown">
@@ -175,12 +175,29 @@
     </div>
 
     <script>
-        // Both targets are pinned to Eastern Daylight Time (UTC-4), so the
-        // countdown reads the same no matter what timezone the viewer is in.
+        // Each launch date is written in exactly one place: the target below.
+        // The offset is explicit (-04:00 = EDT) so the countdown reads the same
+        // no matter what timezone the viewer is in. Dates on or after Nov 1 2026
+        // are in EST and must be written -05:00.
         const launches = [
             { el: document.getElementById('site'), target: new Date("2026-08-10T19:00:00-04:00").getTime() },
             { el: document.getElementById('app'),  target: new Date("2026-08-25T16:00:00-04:00").getTime() }
         ];
+
+        // The date shown under each heading is derived from the target, so the
+        // label and the countdown can never drift out of sync.
+        const etDate = new Intl.DateTimeFormat("en-US", {
+            timeZone: "America/New_York", weekday: "short", month: "short", day: "numeric"
+        });
+        const etTime = new Intl.DateTimeFormat("en-US", {
+            timeZone: "America/New_York", hour: "numeric", minute: "2-digit"
+        });
+
+        launches.forEach(({ el, target }) => {
+            const d = new Date(target);
+            el.querySelector('.launch-when').textContent =
+                etDate.format(d) + " · " + etTime.format(d) + " ET";
+        });
 
         function set(section, unit, value) {
             section.querySelector('[data-u="' + unit + '"]').textContent = value;

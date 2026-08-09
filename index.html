@@ -6,6 +6,9 @@
     <title>Asher's Launch Countdown</title>
     <meta name="description" content="A live countdown to the website launch and the app release.">
 
+    <!-- Inline SVG favicon keeps the page a single self-contained file. -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230f172a'/><circle cx='16' cy='16' r='9.5' fill='none' stroke='%2338bdf8' stroke-width='2.5'/><path d='M16 10v6.3l4 2.4' fill='none' stroke='%2338bdf8' stroke-width='2.5' stroke-linecap='round'/></svg>">
+
     <!--
         Link preview card (Messages, Slack, iMessage, Twitter, etc).
         Preview fetchers do not run JavaScript, so these are static on purpose:
@@ -90,6 +93,10 @@
             font-size: 4rem;
             font-weight: 800;
             line-height: 1;
+            /* Fixed-width digits: without this every tick changes the number's
+               width and the whole countdown visibly jitters once a second. */
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum";
         }
         .main-label {
             font-size: 0.875rem;
@@ -127,6 +134,8 @@
             font-size: 1.75rem;
             font-weight: 700;
             color: #38bdf8;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum";
         }
         .total-label {
             font-size: 0.75rem;
@@ -238,11 +247,13 @@
                 }
                 allDone = false;
 
-                // Math for Standard Display
+                // Math for Standard Display. Hours/mins/secs are padded to two
+                // digits so the row never changes width as values drop.
+                const pad = n => String(n).padStart(2, '0');
                 set(el, 'd', Math.floor(diff / (1000 * 60 * 60 * 24)));
-                set(el, 'h', Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-                set(el, 'm', Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));
-                set(el, 's', Math.floor((diff % (1000 * 60)) / 1000));
+                set(el, 'h', pad(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))));
+                set(el, 'm', pad(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))));
+                set(el, 's', pad(Math.floor((diff % (1000 * 60)) / 1000)));
 
                 // Math for Total Individual Units (with 2 decimal points for weeks)
                 if (el.querySelector('.totals-grid')) {

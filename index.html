@@ -148,11 +148,36 @@
         /* Shown once a countdown hits zero */
         .live {
             display: none;
+            margin-bottom: 50px;
+        }
+        .live-msg {
             font-size: 2rem;
             font-weight: 800;
             letter-spacing: -0.02em;
             color: #4ade80;
-            margin-bottom: 50px;
+        }
+
+        /* Revealed only once link.json shows up (see the script below).
+           [hidden] needs an explicit rule because display:inline-block
+           would otherwise override the attribute. */
+        .reveal-link {
+            display: inline-block;
+            margin-top: 22px;
+            padding: 16px 36px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            color: #0f172a;
+            background: #4ade80;
+            border-radius: 999px;
+            text-decoration: none;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+        .reveal-link[hidden] { display: none; }
+        .reveal-link:hover,
+        .reveal-link:focus-visible {
+            background: #86efac;
+            transform: translateY(-1px);
         }
         .launch.done .main-countdown,
         .launch.done .totals-grid { display: none; }
@@ -176,7 +201,10 @@
                 <div class="time-box"><div data-u="s" class="main-num">00</div><div class="main-label">Secs</div></div>
             </div>
 
-            <div class="live">The website is live 🎉</div>
+            <div class="live">
+                <div class="live-msg">The website is live 🎉</div>
+                <a class="reveal-link" hidden target="_blank" rel="noopener">Go see it &rarr;</a>
+            </div>
         </section>
 
         <hr>
@@ -202,7 +230,9 @@
                 <div class="total-box"><div data-u="tot-s" class="total-num">0</div><div class="total-label">Total Seconds</div></div>
             </div>
 
-            <div class="live">The app is out 🎉</div>
+            <div class="live">
+                <div class="live-msg">The app is out 🎉</div>
+            </div>
         </section>
     </div>
 
@@ -235,6 +265,34 @@
             section.querySelector('[data-u="' + unit + '"]').textContent = value;
         }
 
+        // The launch URL is deliberately absent from this repository. It ships
+        // separately as link.json at reveal time, so there is nothing to find in
+        // the page or its history beforehand. Until that file is deployed this
+        // request 404s, which is the expected state — not an error.
+        //
+        // Polling (rather than reading it once at load) means a tab left open
+        // through the launch reveals the link on its own, with no refresh.
+        function startReveal(el) {
+            const link = el.querySelector('.reveal-link');
+            if (!link || el.dataset.polling) return;   // only sections with a link
+            el.dataset.polling = '1';
+
+            const check = () => {
+                fetch('link.json?t=' + Date.now(), { cache: 'no-store' })
+                    .then(r => (r.ok ? r.json() : null))
+                    .then(data => {
+                        if (!data || !data.url) return;
+                        link.href = data.url;
+                        link.hidden = false;
+                        clearInterval(poll);
+                    })
+                    .catch(() => {});   // offline or not deployed yet; try again
+            };
+
+            const poll = setInterval(check, 15000);
+            check();
+        }
+
         function updateCountdown() {
             let allDone = true;
 
@@ -243,6 +301,7 @@
 
                 if (diff <= 0) {
                     el.classList.add('done');
+                    startReveal(el);
                     return;
                 }
                 allDone = false;

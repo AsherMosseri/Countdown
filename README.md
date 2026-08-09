@@ -25,6 +25,27 @@ Nov 1 2026 fall in EST and must be written `-05:00`** — if you get it wrong th
 displayed label will visibly disagree with what you intended, which is the
 cheapest way to catch it.
 
+## Revealing the launch link
+
+The launch URL is intentionally **not** in this repository. GitHub Pages serves
+these files publicly, so anything committed here is public — encoding or hiding
+it in the page would be obfuscation, not secrecy.
+
+Instead the page polls for `link.json` once a countdown reaches zero. That file
+is absent (and the request 404s) until launch time, when publishing it makes the
+link appear — including in tabs that are already open, with no refresh:
+
+```sh
+./reveal.sh https://example.com
+```
+
+That writes `link.json`, commits, and pushes; Pages redeploys in about a minute.
+The URL is passed as an argument and never stored in the script.
+
+Note that this controls *when the link is handed out*, not whether the
+destination is reachable. A site that is already serving can be found by anyone
+who tries the domain, regardless of what this page shows.
+
 ## Link preview image
 
 `og-image.png` is what Messages/Slack show when the link is shared. It is a

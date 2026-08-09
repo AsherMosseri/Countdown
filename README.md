@@ -25,6 +25,24 @@ Nov 1 2026 fall in EST and must be written `-05:00`** — if you get it wrong th
 displayed label will visibly disagree with what you intended, which is the
 cheapest way to catch it.
 
+## Link preview image
+
+`og-image.png` is what Messages/Slack show when the link is shared. It is a
+screenshot of `og/card.html`, which derives its dates the same way the page
+does. Preview fetchers don't run JavaScript, so the dates have to be baked into
+the image rather than read from the page.
+
+After changing a launch date, update the matching `data-target` in
+`og/card.html` and regenerate:
+
+```sh
+./og/make-og.sh     # requires Google Chrome; writes og-image.png
+```
+
+Apple and Slack cache previews per URL, so a refreshed image may not appear for
+an already-shared link. Sharing it with a throwaway query string
+(`.../Countdown/?v=2`) forces a fresh fetch.
+
 ## Behavior
 
 Each countdown ticks once a second and swaps to a "🎉" message on its own when

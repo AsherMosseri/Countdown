@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OG card source</title>
+    <!--
+        Source image for the link preview card. This is not part of the site;
+        it exists only to be screenshotted into ../og-image.png at 1200x630.
+        Regenerate with og/make-og.sh after changing a launch date.
+    -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 1200px; height: 630px; }
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 90px;
+        }
+        h1 {
+            font-size: 76px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 64px;
+        }
+        .row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 40px;
+            padding: 30px 0;
+            border-top: 2px solid #334155;
+        }
+        .row:last-child { border-bottom: 2px solid #334155; }
+        .what {
+            font-size: 34px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+        .when {
+            font-size: 44px;
+            font-weight: 800;
+            color: #38bdf8;
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Asher's Launch Countdown</h1>
+
+    <div class="row">
+        <span class="what">Website Goes Live</span>
+        <span class="when" data-target="2026-08-10T19:00:00-04:00"></span>
+    </div>
+    <div class="row">
+        <span class="what">App Release</span>
+        <span class="when" data-target="2026-08-25T16:00:00-04:00"></span>
+    </div>
+
+    <script>
+        // Same derivation as index.html, so the card can't disagree with the
+        // page about what time a launch is.
+        const etDate = new Intl.DateTimeFormat("en-US", {
+            timeZone: "America/New_York", weekday: "short", month: "short", day: "numeric"
+        });
+        const etTime = new Intl.DateTimeFormat("en-US", {
+            timeZone: "America/New_York", hour: "numeric", minute: "2-digit"
+        });
+
+        document.querySelectorAll('.when').forEach(el => {
+            const d = new Date(el.dataset.target);
+            el.textContent = etDate.format(d) + " · " + etTime.format(d) + " ET";
+        });
+    </script>
+</body>
+</html>
